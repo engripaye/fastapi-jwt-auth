@@ -21,7 +21,7 @@ def authenticate_user(db: Session, username: str, password: str, verify_password
     user = get_user_by_username(db, username)
     if not user:
         return None
-    if not verify_password_func(password, user.hashed_password)
+    if not verify_password_func(password, user.hashed_password):
         return None
     return user
 
@@ -33,7 +33,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         headers={"WWW-Authenticate": "Bearer"},
     )
     payload = auth.decode_access_token(token)
-    if payload is None
+    if payload is None:
         raise credentials_exception
     username: str = payload.get("sub")
     if username is None:
