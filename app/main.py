@@ -3,8 +3,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
-from . import models, schemas, utils, deps
-from .database import engine, Base, get_db
+from app import models, schemas, utils, deps
+from database import engine, Base, get_db
 
 # CREATE DB TABLES
 Base.metadata.create_all(bind=engine)
