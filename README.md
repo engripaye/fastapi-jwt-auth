@@ -1,111 +1,143 @@
 ---
 
-# User Auth System (JWT Tokens) 🔑
+# FastAPI JWT Authentication 🚀
 
-A lightweight **authentication system** built with **FastAPI**, featuring **secure JWT-based authentication**, **password hashing**, and **protected endpoints**.
+A modern **authentication and authorization API** built with **FastAPI**, **JWT (JSON Web Tokens)**, and **SQLAlchemy**.
+This project demonstrates secure user registration, login, token-based authentication, and role-based access control.
 
-## 🚀 Features
+---
 
-* **User Signup & Login**
-* **Password hashing** with [Passlib](https://passlib.readthedocs.io/)
-* **JWT Authentication** using [python-jose](https://python-jose.readthedocs.io/)
-* **Secure API endpoints** protected with OAuth2 + JWT tokens
-* **Dependency injection** for cleaner and testable code
+## 📌 Features
+
+* 🔑 **User Authentication** with JWT (Access & Refresh Tokens)
+* 👤 **User Registration & Login** endpoints
+* 🔒 **Password Hashing** with `passlib`
+* 🛡️ **Role-Based Access Control (RBAC)** support
+* 🗄️ **SQLAlchemy ORM** for database interaction
+* ⚡ Built on **FastAPI** (high-performance Python framework)
+* 🧪 **Validation** with Pydantic
+
+---
 
 ## 🛠️ Tech Stack
 
-* [FastAPI](https://fastapi.tiangolo.com/) – Web framework
-* [Uvicorn](https://www.uvicorn.org/) – ASGI server
-* [SQLAlchemy](https://www.sqlalchemy.org/) – ORM for database operations
-* [Alembic](https://alembic.sqlalchemy.org/) – Database migrations
-* [Pydantic](https://docs.pydantic.dev/) – Data validation
-* [Passlib](https://passlib.readthedocs.io/) – Password hashing
-* [Python-JOSE](https://python-jose.readthedocs.io/) – JWT tokens
+* **FastAPI** – Web framework
+* **Uvicorn** – ASGI server
+* **SQLAlchemy 2.0** – Database ORM
+* **Passlib** – Password hashing
+* **Python-JOSE** – JWT handling
+* **Pydantic v2** – Data validation
+* **dotenv** – Environment variable management
+
+---
 
 ## 📂 Project Structure
 
-```
-.
-├── app
+```bash
+fastapi-jwt-auth/
+│── app/
 │   ├── main.py          # Entry point
-│   ├── models.py        # Database models
+│   ├── models.py        # SQLAlchemy models
 │   ├── schemas.py       # Pydantic schemas
-│   ├── auth.py          # Authentication logic (JWT, OAuth2)
-│   ├── database.py      # DB setup and session management
-│   └── routes
-│       └── users.py     # Signup/Login endpoints
-├── alembic/             # Migrations
-├── .env                 # Environment variables
-├── requirements.txt     # Dependencies
-└── README.md
+│   ├── database.py      # DB connection setup
+│   ├── auth.py          # Authentication logic
+│   └── utils.py         # Utility functions (hashing, token gen)
+│
+│── venv/                # Virtual environment
+│── requirements.txt     # Project dependencies
+│── .env                 # Environment variables
+│── README.md            # Project documentation
 ```
 
-## ⚡ Installation & Setup
+---
 
-1. **Clone the repo**
+## ⚙️ Installation
+
+1️⃣ Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/user-auth-system.git
-cd user-auth-system
+git clone https://github.com/engripaye/fastapi-jwt-auth.git
+cd fastapi-jwt-auth
 ```
 
-2. **Create and activate a virtual environment**
+2️⃣ Create & activate a virtual environment:
 
 ```bash
 python -m venv venv
-source venv/bin/activate   # On macOS/Linux
+source venv/bin/activate   # On Linux/Mac
 venv\Scripts\activate      # On Windows
 ```
 
-3. **Install dependencies**
+3️⃣ Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Set environment variables**
-   Create a `.env` file in the root folder:
+4️⃣ Set up environment variables:
+Create a `.env` file in the project root:
 
 ```env
-DATABASE_URL=sqlite:///./auth.db
 SECRET_KEY=your_secret_key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
+DATABASE_URL=sqlite:///./test.db
 ```
 
-5. **Run database migrations**
+---
 
-```bash
-alembic upgrade head
-```
+## ▶️ Running the Application
 
-6. **Start the server**
+Start the FastAPI server with **Uvicorn**:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-## 🔑 Usage
+Your API will be available at:
+👉 [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
-* **Signup** → `POST /users/signup`
-* **Login** → `POST /users/login`
-* **Protected Endpoint** → Include `Authorization: Bearer <token>` in headers
-
-## 📖 API Docs
-
-Once the server is running, access interactive API docs:
+Interactive API docs:
 
 * Swagger UI → [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 * ReDoc → [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
-## 🤝 Contributing
+---
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you’d like to improve.
+## 🔑 Example API Endpoints
+
+| Method | Endpoint     | Description                    |
+| ------ | ------------ | ------------------------------ |
+| POST   | `/register`  | Register a new user            |
+| POST   | `/token`     | Login & get JWT tokens         |
+| GET    | `/users/me`  | Get current authenticated user |
+| GET    | `/protected` | Example protected endpoint     |
+
+---
+
+## 🧪 Testing
+
+You can test endpoints with **cURL** or **Postman**. Example login request:
+
+```bash
+curl -X POST "http://127.0.0.1:8000/token" \
+-H "Content-Type: application/x-www-form-urlencoded" \
+-d "username=testuser&password=testpassword"
+```
+
+---
+
+## 🚀 Future Improvements
+
+* ✅ OAuth2 Social Logins (Google, GitHub, etc.)
+* ✅ Refresh Token Rotation
+* ✅ Email Verification & Password Reset
+* ✅ Docker & CI/CD Setup
+
+---
 
 ## 📜 License
 
 This project is licensed under the **MIT License**.
 
 ---
-
-Would you like me to also create a **requirements.txt** snippet inside the README so users can quickly see dependencies without opening the file?
