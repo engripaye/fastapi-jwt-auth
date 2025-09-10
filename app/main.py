@@ -5,11 +5,19 @@ from datetime import timedelta
 
 from app import models, schemas, utils, deps
 from app.database import engine, Base, get_db
+from app import security  # assuming you have JWT functions here
+
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # CREATE DB TABLES
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Simple FastAPI JWT Auth")
+
+
+@app.get("/ping")
+def ping():
+    return {"status": "ok"}
 
 
 @app.post("/signup", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
@@ -20,7 +28,6 @@ def signup(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
     ).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="username or email already registered")
-
     hashed = utils.hash_password(user_in.password)
     user = models.User(username=user_in.username, email=user_in.email, hashed_password=hashed)
     db.add(user)
@@ -30,13 +37,25 @@ def signup(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 @app.post("/token", response_model=schemas.Token)
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    # OAuth2PasswordRequestForm returns username & password fields
+def login_for_access_token(
+        form_data: OAuth2PasswordRequestForm = Depends(),
+        db: Session = Depends(get_db)
+):
     user = deps.authenticate_user(db, form_data.username, form_data.password, utils.verify_password)
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="incorrect username or password",
-                            headers={"WWW-Authenticate": "Bearer"})
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = security.create_access_token(
+        data={"sub": user.username},
+        expires_delta=access_token_expires
+    )
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/me", response_model=schemas.UserOut)
 def read_users_me(current_user: models.User = Depends(deps.get_current_user)):
